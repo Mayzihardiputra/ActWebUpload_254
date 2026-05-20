@@ -3,7 +3,7 @@ $target_dir = "uploads/";
 $uploadOk = 1;
 $message = ""; // Variabel untuk menampung pesan status unggah
 
-// BUNGKUS KODE ASLI KAMU AGAR HANYA BERJALAN JIKA ADA FILE YANG DIUNGGAH
+// BUNGKUS KODE ASLI AGAR HANYA BERJALAN JIKA ADA FILE YANG DIUNGGAH
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES["fileToUpload"])) {
 
     $target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
@@ -11,13 +11,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES["fileToUpload"])) {
 
     // Periksa apakah berkas sebenarnya adalah gambar atau bukan
     if(isset($_POST["submit"])) {
-        $check = getimagesize($_FILES["fileToUpload"]["tmp_name"]);
-        if($check !== false) {
-            $message .= "<div class='alert success'>Berkas adalah gambar - " . $check["mime"] . ".</div>";
-            $uploadOk = 1;
-        } else {
-            $message .= "<div class='alert danger'>Berkas bukan gambar.</div>";
-            $uploadOk = 0;
+        // Cek apakah ukuran file 0 (misal tidak jadi upload atau error sistem)
+        if($_FILES["fileToUpload"]["tmp_name"] != "") {
+            $check = getimagesize($_FILES["fileToUpload"]["tmp_name"]);
+            if($check !== false) {
+                $message .= "<div class='alert success'>Berkas adalah gambar - " . $check["mime"] . ".</div>";
+                $uploadOk = 1;
+            } else {
+                $message .= "<div class='alert danger'>Berkas bukan gambar asli.</div>";
+                $uploadOk = 0;
+            }
         }
     }
 
@@ -73,7 +76,6 @@ if (isset($_GET['action']) && $_GET['action'] == 'download' && isset($_GET['file
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -81,7 +83,6 @@ if (isset($_GET['action']) && $_GET['action'] == 'download' && isset($_GET['file
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kelola File</title>
     <style>
-        /* CSS LANGSUNG DI DALAM FILE PHP */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f4f6f9;
@@ -105,7 +106,6 @@ if (isset($_GET['action']) && $_GET['action'] == 'download' && isset($_GET['file
             border-bottom: 2px solid #edf2f7;
             padding-bottom: 10px;
         }
-        /* Style untuk Notifikasi */
         .alert {
             padding: 12px 15px;
             border-radius: 6px;
@@ -122,7 +122,6 @@ if (isset($_GET['action']) && $_GET['action'] == 'download' && isset($_GET['file
             color: #9b1c1c;
             border: 1px solid #fbd5d5;
         }
-        /* Style Tabel */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -144,7 +143,6 @@ if (isset($_GET['action']) && $_GET['action'] == 'download' && isset($_GET['file
         tr:hover {
             background-color: #f8fafc;
         }
-        /* Tombol Aksi */
         .btn {
             text-decoration: none;
             padding: 6px 12px;
